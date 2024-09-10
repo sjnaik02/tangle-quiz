@@ -15,7 +15,7 @@ export default function Home() {
       className={`min-h-screen flex flex-col ${inter.variable} font-sans max-w-4xl mx-auto px-4 py-12 relative`}
     >
       <div className="text-center mb-12">
-        <h1 className="text-5xl md:text-8xl font-bold mb-8 text-gray-800 whitespace-nowrap">
+        <h1 className="text-5xl md:text-8xl font-bold mb-8 text-gray-800">
           Tangle News Quiz
         </h1>
         <h2 className="text-2xl md:text-2xl mb-4 text-gray-700 max-w-3xl mx-auto font-serif">
