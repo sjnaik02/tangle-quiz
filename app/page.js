@@ -12,18 +12,18 @@ const inter = Inter({
 export default function Home() {
   return (
     <main
-      className={`min-h-screen flex flex-col ${inter.variable} font-sans max-w-4xl mx-auto px-4 py-12 relative`}
+      className={`flex min-h-screen flex-col ${inter.variable} relative mx-auto max-w-4xl px-4 py-8 font-sans`}
     >
-      <div className="text-center mb-12">
-        <h1 className="text-5xl md:text-8xl font-bold mb-8 text-gray-800">
+      <div className="mb-12 text-center">
+        <h1 className="mb-8 text-5xl font-bold text-gray-800 md:text-8xl">
           Tangle News Quiz
         </h1>
-        <h2 className="text-2xl md:text-2xl mb-4 text-gray-700 max-w-3xl mx-auto font-serif">
+        <h2 className="mx-auto mb-4 max-w-3xl font-serif text-lg text-gray-700 md:text-2xl">
           Politics is complicated. How well do you understand the news?
         </h2>
       </div>
 
-      <div className="last:border-b-gray-400 last:border-b">
+      <div className="last:border-b last:border-b-gray-200">
         <QuizLink
           title="The Example Quiz"
           description="A sample quiz to get you started."
@@ -42,9 +42,9 @@ export default function Home() {
 function QuizLink({ title, description, href }) {
   return (
     <Link href={href} className="block">
-      <div className="border-t-gray-500 border-t py-4">
+      <div className="border-t border-t-gray-200 py-8 transition-transform duration-200 hover:scale-105">
         <h2 className="text-xl font-semibold text-gray-800">{title}</h2>
-        <p className="text-gray-600 font-serif">{description}</p>
+        <p className="font-serif text-gray-600">{description}</p>
       </div>
     </Link>
   );
