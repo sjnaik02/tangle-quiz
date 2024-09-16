@@ -1,5 +1,5 @@
 // File: components/QuestionCard.jsx
-import React, { useState } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle, XCircle } from "lucide-react";
 
@@ -37,25 +37,25 @@ const QuestionCard = ({ question, index, onAnswer, selectedAnswer }) => {
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
-      className="mb-8 py-6 bg-white border-t border-gray-300"
+      className="mb-8 border-t border-gray-300 bg-white py-6"
     >
-      <h3 className="text-sm md:text-base mb-2">Question {index + 1}</h3>
-      <p className="text-lg mb-6">{question.question}</p>
+      <h3 className="mb-2 text-sm md:text-base">Question {index + 1}</h3>
+      <p className="mb-6 text-lg">{question.question}</p>
       <div className="space-y-3 md:space-y-4">
         {Object.entries(question.answers).map(([key, value]) => (
           <motion.button
             key={key}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className={`w-full text-left p-4 rounded-md transition-all duration-200 flex items-center justify-between ${
+            className={`flex w-full items-center justify-between rounded-md p-4 text-left transition-all duration-200 ${
               selectedAnswer
                 ? key === question.correct
                   ? "bg-green-100 text-green-800"
                   : selectedAnswer === key
-                  ? "bg-red-100 text-red-800"
-                  : "bg-gray-100 text-gray-800"
-                : "bg-gray-50 hover:bg-gray-100 text-gray-800"
-            } text-base md:text-lg border border-gray-200`}
+                    ? "bg-red-100 text-red-800"
+                    : "bg-gray-100 text-gray-800"
+                : "bg-gray-50 text-gray-800 hover:bg-gray-100"
+            } border border-gray-200 text-base md:text-lg`}
             onClick={() => handleAnswerClick(key)}
             disabled={selectedAnswer !== null}
           >
@@ -83,9 +83,9 @@ const QuestionCard = ({ question, index, onAnswer, selectedAnswer }) => {
             animate="visible"
             exit="hidden"
             variants={explanationVariants}
-            className="mt-4 bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-md overflow-hidden"
+            className="mt-4 overflow-hidden rounded-r-md border-l-4 border-blue-500 bg-blue-50 p-4"
           >
-            <p className="text-sm md:text-base text-blue-800">
+            <p className="text-sm text-blue-800 md:text-base">
               {question.explanation}
             </p>
           </motion.div>

@@ -1,36 +1,56 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Tangle News Quiz
+
+Tangle News Quiz is an interactive web application designed to test users' knowledge of current events and political news. Built with Next.js and React, this project aims to engage users with thought-provoking questions while providing educational explanations.
+
+## Features
+
+- Multiple quizzes on various political topics
+- Interactive question cards with immediate feedback
+- Progress tracking
+- Responsive design for desktop and mobile devices
+- Animated UI elements for enhanced user experience
 
 ## Getting Started
 
-First, run the development server:
+To run this project locally, follow these steps:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. Clone the repository
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Run the development server:
+   ```bash
+   npm run dev
+   ```
+4. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Project Structure
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+- `app/`: Contains the main application pages and components
+- `components/`: Reusable UI components
+- `lib/`: Quiz data and utility functions
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Available Quizzes
 
-## Learn More
+- Example Quiz: A sample quiz to demonstrate functionality
+- Election Quiz: Test your knowledge on election processes and history
 
-To learn more about Next.js, take a look at the following resources:
+## Technologies Used
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Next.js
+- React
+- Framer Motion for animations
+- Tailwind CSS for styling
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Feedback
 
-## Deploy on Vercel
+This project is currently in beta. Please send all feedback and issues to [shourya@readtangle.com](mailto:shourya@readtangle.com).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## License
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+[MIT License](LICENSE)
+
+## About Tangle
+
+Tangle is committed to providing unbiased political coverage. Learn more at [https://readtangle.com](https://readtangle.com).
