@@ -12,7 +12,7 @@ const inter = Inter({
 export default function Home() {
   return (
     <main
-      className={`flex min-h-screen flex-col ${inter.variable} relative mx-auto max-w-4xl px-4 py-8 font-sans`}
+      className={`flex min-h-screen flex-col ${inter.variable} relative mx-auto max-w-4xl px-4 py-8 font-sans tracking-tighter`}
     >
       <div className="mb-12 text-center">
         <h1 className="mb-8 text-5xl font-bold text-gray-800 md:text-8xl">
@@ -23,7 +23,7 @@ export default function Home() {
         </h2>
       </div>
 
-      <div className="last:border-b last:border-b-gray-200">
+      <div className="last:border-b last:border-b-gray-200 max-w-2xl mx-auto w-full">
         <QuizLink
           title="The Example Quiz"
           description="A sample quiz to get you started."
@@ -41,10 +41,10 @@ export default function Home() {
 
 function QuizLink({ title, description, href }) {
   return (
-    <Link href={href} className="block">
+    <Link href={href} className="">
       <div className="border-t border-t-gray-200 py-8 transition-transform duration-200 hover:scale-105">
-        <h2 className="text-xl font-semibold text-gray-800">{title}</h2>
-        <p className="font-serif text-gray-600">{description}</p>
+        <h2 className="text-xl md:text-2xl font-semibold text-gray-800">{title}</h2>
+        <p className="font-serif text-gray-600 md:text-lg">{description}</p>
       </div>
     </Link>
   );

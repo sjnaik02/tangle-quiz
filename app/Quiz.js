@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import QuestionCard from "./QuestionCard";
-import ProgressBar from "./ProgressBar";
 import ResultMessage from "./ResultMessage";
 import BetaCallout from "./BetaCallout";
 
@@ -46,10 +45,6 @@ const Quiz = ({ questions }) => {
           "Politics is complicated. How well do you understand the news?"}
       </h2>
       <div className="mx-auto w-full max-w-2xl flex-grow">
-        <ProgressBar
-          answered={answers.filter((a) => a !== null).length}
-          total={quizQuestions.length}
-        />
         <AnimatePresence mode="wait">
           {!showResult ? (
             <motion.div

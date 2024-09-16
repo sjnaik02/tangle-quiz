@@ -1,4 +1,4 @@
-// File: components/ProgressBar.jsx
+// currently unused
 import React from "react";
 import { Progress } from "@/components/ui/progress";
 
