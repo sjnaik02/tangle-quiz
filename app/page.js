@@ -16,7 +16,7 @@ export default function Home() {
     >
       <div className="mb-12 text-center">
         <h1 className="mb-8 text-5xl font-bold text-gray-800 md:text-8xl">
-          Tangle News Quiz
+          Tangle Quizzes
         </h1>
         <h2 className="mx-auto mb-4 max-w-3xl font-serif text-lg text-gray-700 md:text-2xl">
           Politics is complicated. How well do you understand the news?
