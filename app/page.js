@@ -18,7 +18,7 @@ export default function Home() {
         <h1 className="mb-8 text-5xl font-bold text-gray-800 md:text-8xl">
           Tangle Quizzes
         </h1>
-        <h2 className="mx-auto mb-4 max-w-3xl font-serif text-lg text-gray-700 md:text-2xl">
+        <h2 className="mx-auto md:mb-4 mb-2 max-w-3xl font-serif text-lg text-gray-700 md:text-2xl">
           Politics is complicated. How well do you understand the news?
         </h2>
       </div>
