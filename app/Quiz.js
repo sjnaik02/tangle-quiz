@@ -36,11 +36,11 @@ const Quiz = ({ questions }) => {
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl mb-4 sm:mb-6 font-bold tracking-tight md:mb-8 mt-8 sm:mt-12 md:mt-16 text-center break-words sm:whitespace-nowrap"
+        className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl mb-4 sm:mb-6 font-bold tracking-tight md:mb-8 mt-8 sm:mt-12 md:mt-16 md:text-center text-left break-words sm:whitespace-nowrap"
       >
         {title || "Tangle News Quiz"}
       </motion.h1>
-      <h2 className="text-lg sm:text-xl md:text-2xl mb-4 text-center text-gray-700 max-w-3xl mx-auto font-serif px-2">
+      <h2 className="text-lg sm:text-xl md:text-2xl mb-4 md:text-center text-left text-gray-700 max-w-3xl mx-auto font-serif px-2">
         {subtitle ||
           "Politics is complicated. How well do you understand the news?"}
       </h2>
