@@ -13,6 +13,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/tangle-logo-gradient.png" />
+      </head>
       <CSPostHogProvider>
         <body className={inter.className}>
           <Header />
