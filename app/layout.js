@@ -1,6 +1,6 @@
 import { Inter } from "next/font/google";
 import Image from "next/image";
-import Header from "./Header";
+import Header from "../components/Header";
 import "./globals.css";
 import { CSPostHogProvider } from "./providers";
 const inter = Inter({ subsets: ["latin"] });

@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import Quiz from "../Quiz";
+import Quiz from "../../components/Quiz";
 import electionQuiz from "../../lib/election-quiz";
 
 const QuizPage = () => {
