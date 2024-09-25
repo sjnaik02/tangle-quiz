@@ -24,6 +24,11 @@ export default function Home() {
 
       <div className="last:border-b last:border-b-gray-200 max-w-2xl mx-auto w-full">
         <QuizLink
+          title="Do You Know Our Candidates?"
+          description="How well do you know our candidates' policies and positions? Test your knowledge with this quiz!"
+          href="/know-the-candidates"
+        />
+        <QuizLink
           title="The Example Quiz"
           description="A sample quiz to get you started."
           href="/example"

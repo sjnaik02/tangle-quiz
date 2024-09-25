@@ -1,9 +1,8 @@
 // File: components/Quiz.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import QuestionCard from "./QuestionCard";
 import ResultMessage from "./ResultMessage";
-import BetaCallout from "./BetaCallout";
 
 const Quiz = ({ questions }) => {
   const { title, subtitle, questions: quizQuestions } = questions;
@@ -12,6 +11,7 @@ const Quiz = ({ questions }) => {
     new Array(quizQuestions.length).fill(null)
   );
   const [showResult, setShowResult] = useState(false);
+  const [allAnswered, setAllAnswered] = useState(false);
 
   const handleAnswer = (index, answer) => {
     const newAnswers = [...answers];
@@ -19,9 +19,19 @@ const Quiz = ({ questions }) => {
     setAnswers(newAnswers);
 
     if (newAnswers.every((a) => a !== null)) {
-      setShowResult(true);
+      setAllAnswered(true);
     }
   };
+
+  useEffect(() => {
+    if (allAnswered) {
+      const timer = setTimeout(() => {
+        setShowResult(true);
+      }, 3000); // 3 seconds delay
+
+      return () => clearTimeout(timer);
+    }
+  }, [allAnswered]);
 
   const score = answers.reduce(
     (acc, answer, index) =>
@@ -31,12 +41,11 @@ const Quiz = ({ questions }) => {
 
   return (
     <div className="min-h-screen flex flex-col px-4 sm:px-6 lg:px-8">
-      <BetaCallout />
       <motion.h1
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl mb-4 sm:mb-6 font-bold tracking-tight md:mb-8 mt-8 sm:mt-12 md:mt-16 md:text-center text-left break-words sm:whitespace-nowrap"
+        className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl mb-4 sm:mb-6 font-bold md:mb-8 mt-8 sm:mt-12 md:mt-16 md:text-center text-left break-words max-w-4xl mx-auto"
       >
         {title || "Tangle News Quiz"}
       </motion.h1>
@@ -64,6 +73,15 @@ const Quiz = ({ questions }) => {
                   selectedAnswer={answers[index]}
                 />
               ))}
+              {allAnswered && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="text-center text-xl font-bold text-gray-700 mt-4"
+                >
+                  Calculating your results...
+                </motion.div>
+              )}
             </motion.div>
           ) : (
             <ResultMessage score={score} total={quizQuestions.length} />
