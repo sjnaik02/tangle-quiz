@@ -1,17 +1,17 @@
 // File: components/Quiz.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import QuestionCard from "./QuestionCard";
 import ResultMessage from "./ResultMessage";
+import Link from "next/link";
 
 const Quiz = ({ questions }) => {
-  const { title, subtitle, questions: quizQuestions } = questions;
+  const { title, subtitle, questions: quizQuestions, customCopy, customCTA, customCTALink } = questions;
 
   const [answers, setAnswers] = useState(
     new Array(quizQuestions.length).fill(null)
   );
   const [showResult, setShowResult] = useState(false);
-  const [allAnswered, setAllAnswered] = useState(false);
 
   const handleAnswer = (index, answer) => {
     const newAnswers = [...answers];
@@ -19,19 +19,9 @@ const Quiz = ({ questions }) => {
     setAnswers(newAnswers);
 
     if (newAnswers.every((a) => a !== null)) {
-      setAllAnswered(true);
+      setShowResult(true);
     }
   };
-
-  useEffect(() => {
-    if (allAnswered) {
-      const timer = setTimeout(() => {
-        setShowResult(true);
-      }, 3000); // 3 seconds delay
-
-      return () => clearTimeout(timer);
-    }
-  }, [allAnswered]);
 
   const score = answers.reduce(
     (acc, answer, index) =>
@@ -54,46 +44,48 @@ const Quiz = ({ questions }) => {
           "Politics is complicated. How well do you understand the news?"}
       </h2>
       <div className="mx-auto w-full max-w-2xl flex-grow">
-        <AnimatePresence mode="wait">
-          {!showResult ? (
-            <motion.div
-              key="questions"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.5 }}
-              className="space-y-6 sm:space-y-8"
-            >
-              {quizQuestions.map((question, index) => (
-                <QuestionCard
-                  key={index}
-                  question={question}
-                  index={index}
-                  onAnswer={handleAnswer}
-                  selectedAnswer={answers[index]}
-                />
-              ))}
-              {allAnswered && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="text-center text-xl font-bold text-gray-700 mt-4"
-                >
-                  Calculating your results...
-                </motion.div>
-              )}
-            </motion.div>
-          ) : (
-            <ResultMessage score={score} total={quizQuestions.length} />
-          )}
-        </AnimatePresence>
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1, duration: 0.5 }}
-          className="text-center text-gray-600 mt-8"
-        ></motion.div>
+          transition={{ duration: 0.5 }}
+          className="space-y-6 sm:space-y-8"
+        >
+          {quizQuestions.map((question, index) => (
+            <QuestionCard
+              key={index}
+              question={question}
+              index={index}
+              onAnswer={handleAnswer}
+              selectedAnswer={answers[index]}
+            />
+          ))}
+        </motion.div>
+        
+        <AnimatePresence>
+          {showResult && (
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="mt-12 mb-16"
+            >
+              <ResultMessage 
+                score={score} 
+                total={quizQuestions.length} 
+                customCopy={customCopy}
+                customCTA={customCTA}
+                customCTALink={customCTALink}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
+      
+      <footer className="mt-auto py-8 text-center text-gray-600">
+        <Link href="https://readtangle.com" target="_blank" rel="noopener noreferrer" className="hover:text-indigo-600 transition-colors">
+          © {new Date().getFullYear()} Tangle News. All rights reserved.
+        </Link>
+      </footer>
     </div>
   );
 };
