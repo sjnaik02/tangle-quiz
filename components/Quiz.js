@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import QuestionCard from "./QuestionCard";
+import RevealQuestionCard from "./RevealQuestionCard";
 import ResultMessage from "./ResultMessage";
 import Link from "next/link";
 
@@ -58,7 +58,7 @@ const Quiz = ({ questions }) => {
           className="space-y-6 sm:space-y-8"
         >
           {quizQuestions.map((question, index) => (
-            <QuestionCard
+            <RevealQuestionCard
               key={index}
               question={question}
               index={index}

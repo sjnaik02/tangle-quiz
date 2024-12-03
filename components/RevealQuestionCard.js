@@ -95,4 +95,4 @@ const RevealQuestionCard = ({ question, index, onAnswer, selectedAnswer }) => {
   );
 };
 
-export default QuestionCard;
+export default RevealQuestionCard;
