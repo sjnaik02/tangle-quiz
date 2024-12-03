@@ -3,7 +3,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle, XCircle } from "lucide-react";
 
-const QuestionCard = ({ question, index, onAnswer, selectedAnswer }) => {
+const RevealQuestionCard = ({ question, index, onAnswer, selectedAnswer }) => {
   const [showExplanation, setShowExplanation] = useState(false);
 
   const handleAnswerClick = (answer) => {

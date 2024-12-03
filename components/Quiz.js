@@ -1,4 +1,4 @@
-// File: components/Quiz.jsx
+"use client";
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import QuestionCard from "./QuestionCard";
@@ -6,10 +6,17 @@ import ResultMessage from "./ResultMessage";
 import Link from "next/link";
 
 const Quiz = ({ questions }) => {
-  const { title, subtitle, questions: quizQuestions, customCopy, customCTA, customCTALink } = questions;
+  const {
+    title,
+    subtitle,
+    questions: quizQuestions,
+    customCopy,
+    customCTA,
+    customCTALink,
+  } = questions;
 
   const [answers, setAnswers] = useState(
-    new Array(quizQuestions.length).fill(null)
+    new Array(quizQuestions.length).fill(null),
   );
   const [showResult, setShowResult] = useState(false);
 
@@ -26,20 +33,20 @@ const Quiz = ({ questions }) => {
   const score = answers.reduce(
     (acc, answer, index) =>
       answer === quizQuestions[index].correct ? acc + 1 : acc,
-    0
+    0,
   );
 
   return (
-    <div className="min-h-screen flex flex-col px-4 sm:px-6 lg:px-8">
+    <div className="flex min-h-screen flex-col px-4 sm:px-6 lg:px-8">
       <motion.h1
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl mb-4 sm:mb-6 font-bold md:mb-8 mt-8 sm:mt-12 md:mt-16 md:text-center text-left break-words max-w-4xl mx-auto"
+        className="mx-auto mb-4 mt-8 max-w-4xl break-words text-left text-4xl font-bold sm:mb-6 sm:mt-12 sm:text-5xl md:mb-8 md:mt-16 md:text-center md:text-6xl lg:text-8xl"
       >
         {title || "Tangle News Quiz"}
       </motion.h1>
-      <h2 className="text-lg sm:text-xl md:text-2xl mb-4 md:text-center text-left text-gray-700 max-w-3xl mx-auto font-serif px-2">
+      <h2 className="mx-auto mb-4 max-w-3xl px-2 text-left font-serif text-lg text-gray-700 sm:text-xl md:text-center md:text-2xl">
         {subtitle ||
           "Politics is complicated. How well do you understand the news?"}
       </h2>
@@ -60,18 +67,18 @@ const Quiz = ({ questions }) => {
             />
           ))}
         </motion.div>
-        
+
         <AnimatePresence>
           {showResult && (
             <motion.div
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="mt-12 mb-16"
+              className="mb-16 mt-12"
             >
-              <ResultMessage 
-                score={score} 
-                total={quizQuestions.length} 
+              <ResultMessage
+                score={score}
+                total={quizQuestions.length}
                 customCopy={customCopy}
                 customCTA={customCTA}
                 customCTALink={customCTALink}
@@ -80,9 +87,14 @@ const Quiz = ({ questions }) => {
           )}
         </AnimatePresence>
       </div>
-      
+
       <footer className="mt-auto py-8 text-center text-gray-600">
-        <Link href="https://readtangle.com" target="_blank" rel="noopener noreferrer" className="hover:text-indigo-600 transition-colors">
+        <Link
+          href="https://readtangle.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="transition-colors hover:text-indigo-600"
+        >
           © {new Date().getFullYear()} Tangle News. All rights reserved.
         </Link>
       </footer>
