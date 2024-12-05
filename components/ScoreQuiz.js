@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { toPng } from "html-to-image";
 import { ClipboardIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
+import { toast } from "sonner";
 const ScoreQuiz = ({ questions }) => {
   const {
     title,
@@ -244,22 +244,32 @@ const BubbleResultsViz = ({
     if (index < leftPct + centerPct) return "center";
     return "right";
   });
-
   const copyGridToClipboard = async () => {
     if (!gridRef.current) return;
 
-    toPng(gridRef.current).then((dataUrl) => {
-      // Convert data URL to blob
-      fetch(dataUrl)
-        .then((res) => res.blob())
-        .then((blob) => {
-          // Create ClipboardItem with proper MIME type
-          const item = new ClipboardItem({
-            "image/png": blob,
-          });
-          navigator.clipboard.write([item]);
+    try {
+      const dataUrl = await toPng(gridRef.current);
+
+      // Check if the browser supports the modern Clipboard API
+      if (navigator.clipboard && navigator.clipboard.write) {
+        const blob = await fetch(dataUrl).then((res) => res.blob());
+        const item = new ClipboardItem({
+          "image/png": blob,
         });
-    });
+        await navigator.clipboard.write([item]);
+      } else {
+        // Fallback for Safari - create temporary link and trigger download
+        const link = document.createElement("a");
+        link.download = "news-bubble-results.png";
+        link.href = dataUrl;
+        link.click();
+      }
+
+      toast.success("Image saved!");
+    } catch (err) {
+      console.error(err);
+      toast.error("Could not save image. Try downloading instead.");
+    }
   };
 
   function getScoreMessage(leftPct, centerPct, rightPct) {

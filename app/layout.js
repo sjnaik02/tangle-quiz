@@ -1,5 +1,5 @@
 import { Inter } from "next/font/google";
-import Image from "next/image";
+import { Toaster } from "sonner";
 import Header from "../components/Header";
 import "./globals.css";
 import { CSPostHogProvider } from "./providers";
@@ -19,6 +19,7 @@ export default function RootLayout({ children }) {
       <CSPostHogProvider>
         <body className={inter.className}>
           <Header />
+          <Toaster />
           {children}
         </body>
       </CSPostHogProvider>
