@@ -1,8 +1,11 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import NumberFlow from "@number-flow/react";
 import Link from "next/link";
+import { Card } from "@/components/ui/card";
+import { toPng } from "html-to-image";
+import { ClipboardIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const ScoreQuiz = ({ questions }) => {
   const {
@@ -53,11 +56,11 @@ const ScoreQuiz = ({ questions }) => {
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="mx-auto mb-4 mt-8 max-w-4xl break-words text-left text-3xl font-bold sm:mb-6 sm:mt-12 sm:text-4xl md:mb-8 md:mt-16 md:text-center md:text-5xl lg:text-6xl"
+        className="mx-auto mb-4 mt-8 max-w-4xl break-words text-left text-2xl font-bold sm:mb-6 sm:mt-12 sm:text-3xl md:mb-8 md:mt-16 md:text-center md:text-4xl lg:text-5xl xl:text-6xl"
       >
         {title || "News Bubble Quiz"}
       </motion.h1>
-      <h2 className="mx-auto mb-4 max-w-3xl px-2 text-left font-serif text-base text-gray-700 sm:text-lg md:text-center md:text-xl">
+      <h2 className="mx-auto mb-4 max-w-3xl px-2 text-left font-serif text-sm text-gray-700 sm:text-base md:text-center md:text-lg lg:text-xl">
         {subtitle || "Are you in a news bubble? Let's find out!"}
       </h2>
       <div className="mx-auto w-full max-w-2xl flex-grow">
@@ -65,7 +68,7 @@ const ScoreQuiz = ({ questions }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className="space-y-6 sm:space-y-8"
+          className="space-y-4 sm:space-y-6 md:space-y-8"
         >
           {quizQuestions.map((question, index) => (
             <ScoreQuestionCard
@@ -84,7 +87,7 @@ const ScoreQuiz = ({ questions }) => {
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="mb-16 mt-12"
+              className="mb-8 mt-8 sm:mb-12 sm:mt-10 md:mb-16 md:mt-12"
             >
               <BubbleResultsViz
                 answers={answers}
@@ -98,7 +101,7 @@ const ScoreQuiz = ({ questions }) => {
         </AnimatePresence>
       </div>
 
-      <footer className="mt-auto py-8 text-center text-gray-600">
+      <footer className="mt-auto py-4 text-center text-sm text-gray-600 sm:py-6 md:py-8 md:text-base">
         <Link
           href="https://readtangle.com"
           target="_blank"
@@ -118,21 +121,25 @@ const ScoreQuestionCard = ({ question, index, onAnswer, selectedAnswer }) => (
     initial={{ opacity: 0, y: 50 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.5, delay: index * 0.1 }}
-    className="mb-8 border-t border-gray-300 bg-white py-6"
+    className="mb-4 border-t border-gray-300 bg-white py-4 sm:mb-6 sm:py-5 md:mb-8 md:py-6"
   >
-    <h3 className="mb-2 text-sm md:text-base">Question {index + 1}</h3>
-    <p className="mb-6 text-lg">{question.question}</p>
-    <div className="space-y-3 md:space-y-4">
+    <h3 className="mb-2 text-xs sm:text-sm md:text-base">
+      Question {index + 1}
+    </h3>
+    <p className="mb-4 text-base sm:mb-5 sm:text-lg md:mb-6 md:text-xl">
+      {question.question}
+    </p>
+    <div className="space-y-2 sm:space-y-3 md:space-y-4">
       {Object.entries(question.answers).map(([key, value]) => (
         <motion.button
           key={key}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className={`flex w-full items-center justify-between rounded-md p-4 text-left transition-all duration-200 ${
+          className={`flex w-full items-center justify-between rounded-md p-3 text-left text-sm transition-all duration-200 sm:p-4 sm:text-base md:text-lg ${
             selectedAnswer === key
               ? "bg-blue-100 text-blue-800"
               : "bg-gray-50 text-gray-800 hover:bg-gray-100"
-          } border border-gray-200 text-base md:text-lg`}
+          } border border-gray-200`}
           onClick={() => onAnswer(index, key)}
         >
           <span>{value}</span>
@@ -142,6 +149,64 @@ const ScoreQuestionCard = ({ question, index, onAnswer, selectedAnswer }) => (
   </motion.div>
 );
 
+function calculateScores(answers, questions) {
+  // Start with neutral prior
+  let totalExposure = {
+    left: 33.33,
+    center: 33.33,
+    right: 33.33,
+  };
+
+  let totalWeight = 100; // Starting weight for prior
+
+  answers.forEach((answer, index) => {
+    const question = questions[index];
+    const scores = {
+      left: parseInt(question.left),
+      center: parseInt(question.center),
+      right: parseInt(question.right),
+    };
+
+    if (answer === "a") {
+      // For seen stories, add probability mass
+      totalExposure.left += scores.left;
+      totalExposure.center += scores.center;
+      totalExposure.right += scores.right;
+      totalWeight += 100;
+    } else {
+      // For unseen stories, small penalty to dominant perspective
+      const maxScore = Math.max(scores.left, scores.center, scores.right);
+      const penaltyWeight = 15; // Slightly reduced penalty given the prior
+
+      if (scores.left === maxScore) {
+        totalExposure.left -= penaltyWeight;
+      }
+      if (scores.center === maxScore) {
+        totalExposure.center -= penaltyWeight;
+      }
+      if (scores.right === maxScore) {
+        totalExposure.right -= penaltyWeight;
+      }
+
+      totalWeight += penaltyWeight;
+    }
+  });
+
+  // Ensure no negative values
+  totalExposure.left = Math.max(0, totalExposure.left);
+  totalExposure.center = Math.max(0, totalExposure.center);
+  totalExposure.right = Math.max(0, totalExposure.right);
+
+  // Convert to percentages
+  const total = totalExposure.left + totalExposure.center + totalExposure.right;
+
+  return {
+    leftPct: Math.round((totalExposure.left / total) * 100),
+    centerPct: Math.round((totalExposure.center / total) * 100),
+    rightPct: Math.round((totalExposure.right / total) * 100),
+  };
+}
+
 const BubbleResultsViz = ({
   answers,
   questions,
@@ -149,153 +214,267 @@ const BubbleResultsViz = ({
   customCTA,
   customCTALink,
 }) => {
-  // Calculate scores for each category
-  const scores = answers.reduce(
-    (acc, answer, index) => {
-      if (answer === "a") {
-        // If they saw the story
-        acc.left += parseInt(questions[index].left) || 0;
-        acc.center += parseInt(questions[index].center) || 0;
-        acc.right += parseInt(questions[index].right) || 0;
-        acc.total++;
-      }
-      return acc;
-    },
-    { left: 0, center: 0, right: 0, total: 0 },
+  const { leftPct, centerPct, rightPct, primaryBubble } = calculateScores(
+    answers,
+    questions,
   );
 
-  // Convert to percentages
-  const leftPct = Math.round((scores.left / (scores.total * 100)) * 100) || 0;
-  const centerPct =
-    Math.round((scores.center / (scores.total * 100)) * 100) || 0;
-  const rightPct = Math.round((scores.right / (scores.total * 100)) * 100) || 0;
-
-  // Determine primary bubble
-  const max = Math.max(leftPct, centerPct, rightPct);
-  let primaryBubble = "center";
-  if (max === leftPct) primaryBubble = "left";
-  if (max === rightPct) primaryBubble = "right";
-
   const [showFinal, setShowFinal] = useState(false);
-  const [isAnimating, setIsAnimating] = useState(true);
+  const [showColor, setShowColor] = useState(false);
+  const gridRef = useRef(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowFinal(true);
-      setIsAnimating(false);
-    }, 3000);
+      setShowColor(true);
+    }, 1000);
     return () => clearTimeout(timer);
   }, []);
 
+  const COLORS = {
+    left: "rgb(0, 0, 255)", // Democratic blue
+    center: "rgb(128, 0, 128)", // Purple
+    right: "rgb(255, 0, 0)", // Republican red
+    empty: "rgb(229, 231, 235)", // Light gray
+  };
+
+  // Create array of 100 squares with assigned categories
+  const squares = Array.from({ length: 100 }, (_, index) => {
+    if (index < leftPct) return "left";
+    if (index < leftPct + centerPct) return "center";
+    return "right";
+  });
+
+  const copyGridToClipboard = async () => {
+    if (!gridRef.current) return;
+
+    toPng(gridRef.current).then((dataUrl) => {
+      // Convert data URL to blob
+      fetch(dataUrl)
+        .then((res) => res.blob())
+        .then((blob) => {
+          // Create ClipboardItem with proper MIME type
+          const item = new ClipboardItem({
+            "image/png": blob,
+          });
+          navigator.clipboard.write([item]);
+        });
+    });
+  };
+
+  function getScoreMessage(leftPct, centerPct, rightPct) {
+    const scores = [leftPct, centerPct, rightPct];
+    const max = Math.max(...scores);
+    const others = scores.filter((s) => s !== max);
+    const avgOthers = others.reduce((a, b) => a + b, 0) / others.length;
+    const spread = max - avgOthers;
+
+    // Clear bubble case: over 50%
+    if (max > 50) {
+      if (leftPct === max) {
+        return {
+          title: "Left News Bubble",
+          message:
+            "You're predominantly seeing left-leaning coverage of events.",
+          suggestion:
+            "Try diversifying with some center and right-leaning sources like Reuters or The Wall Street Journal.",
+        };
+      }
+      if (rightPct === max) {
+        return {
+          title: "Right News Bubble",
+          message:
+            "You're predominantly seeing right-leaning coverage of events.",
+          suggestion:
+            "Try diversifying with some center and left-leaning sources like Reuters or The Atlantic.",
+        };
+      }
+      if (centerPct === max) {
+        return {
+          title: "Mainstream Bubble",
+          message: "You're predominantly seeing mainstream coverage of events.",
+          suggestion:
+            "While mainstream sources are valuable, consider adding partisan perspectives to understand different viewpoints.",
+        };
+      }
+    }
+
+    // Strong lean case: 40-50% AND significant spread
+    if (max > 40 && spread > 15) {
+      if (leftPct === max) {
+        return {
+          title: "Left-Heavy Diet",
+          message: "Your news diet leans significantly left.",
+          suggestion:
+            "Consider balancing with more center and right perspectives.",
+        };
+      }
+      if (rightPct === max) {
+        return {
+          title: "Right-Heavy Diet",
+          message: "Your news diet leans significantly right.",
+          suggestion:
+            "Consider balancing with more center and left perspectives.",
+        };
+      }
+      if (centerPct === max) {
+        return {
+          title: "Center-Heavy Diet",
+          message: "Your news diet is heavily centered on mainstream sources.",
+          suggestion:
+            "Consider adding some partisan perspectives for a fuller picture.",
+        };
+      }
+    }
+
+    // Slight lean case: noticeable spread but not dominant
+    if (spread > 10) {
+      return {
+        title: "Slightly Imbalanced Diet",
+        message: "Your news diet shows some imbalance, but isn't extreme.",
+        suggestion: "You might benefit from adding more diverse sources.",
+      };
+    }
+
+    // Balanced case
+    return {
+      title: "Balanced News Diet",
+      message: "You're seeing a healthy mix of perspectives.",
+      suggestion: "Keep up the diverse news consumption!",
+    };
+  }
   return (
-    <div className="mt-8 rounded-lg bg-white p-6 shadow-lg">
-      <h3 className="mb-6 text-2xl font-bold">Your News Bubble</h3>
+    <Card className="mx-auto mt-4 w-full max-w-3xl bg-white p-4 sm:mt-6 sm:p-6 md:mt-8 md:p-8">
+      <h3 className="mb-4 text-xl font-bold sm:mb-5 sm:text-2xl md:mb-6 md:text-3xl">
+        Your News Bubble
+      </h3>
 
-      <div className="space-y-8">
-        <div className="flex justify-between px-4 font-semibold">
-          <span className="text-blue-600">Left-Leaning</span>
-          <span className="text-gray-600">Center</span>
-          <span className="text-red-600">Right-Leaning</span>
-        </div>
+      <div className="space-y-6 bg-white sm:space-y-7 md:space-y-8">
+        <div
+          className="flex w-full flex-col items-center justify-center bg-white pb-4"
+          ref={gridRef}
+        >
+          {/* Labels */}
+          <div className="mb-3 flex w-full items-center justify-center space-y-2 px-2 text-center font-semibold sm:mb-4 sm:flex-row sm:justify-between sm:space-y-0 sm:px-4 md:text-lg">
+            <span style={{ color: COLORS.left }}>
+              Left-Leaning ({leftPct}%)
+            </span>
+            <span style={{ color: COLORS.center }}>Center ({centerPct}%)</span>
+            <span style={{ color: COLORS.right }}>
+              Right-Leaning ({rightPct}%)
+            </span>
+          </div>
 
-        <div className="flex h-32 items-stretch overflow-hidden rounded-lg shadow-md">
-          <motion.div
-            className="relative flex items-center justify-center bg-blue-500/80"
-            initial={{ flex: 1 }}
-            animate={{
-              flex: isAnimating ? [0.5, 2, 1, 1.5, 1] : leftPct,
-            }}
-            transition={{
-              duration: 2,
-              ease: "easeInOut",
-              times: [0, 0.2, 0.4, 0.6, 0.8],
-              repeat: isAnimating ? Infinity : 0,
-            }}
-          >
-            <motion.span
-              className="absolute text-2xl font-bold text-white"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: showFinal ? 1 : 0 }}
-              transition={{ delay: 0.5 }}
-            >
-              {showFinal && `${leftPct}%`}
-            </motion.span>
-          </motion.div>
+          {/* Grid Container with Copy Button */}
+          <div className="relative bg-white">
+            {/* Mobile Grid (10x10) */}
+            <div className="flex gap-0.5 sm:hidden">
+              {Array.from({ length: 10 }, (_, colIndex) => (
+                <div key={colIndex} className="flex flex-col gap-0.5">
+                  {squares
+                    .slice(colIndex * 10, (colIndex + 1) * 10)
+                    .map((category, index) => (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, scale: 0 }}
+                        animate={{
+                          opacity: 1,
+                          scale: 1,
+                          backgroundColor: showColor
+                            ? COLORS[category]
+                            : COLORS.empty,
+                        }}
+                        transition={{
+                          opacity: {
+                            duration: 0.3,
+                            delay: (colIndex * 10 + index) * 0.01,
+                          },
+                          scale: {
+                            duration: 0.3,
+                            delay: (colIndex * 10 + index) * 0.01,
+                          },
+                          backgroundColor: {
+                            duration: 0.5,
+                            delay: 1 + (colIndex * 10 + index) * 0.01,
+                          },
+                        }}
+                        className="h-6 w-6 rounded-sm shadow-sm"
+                      />
+                    ))}
+                </div>
+              ))}
+            </div>
 
-          <motion.div
-            className="relative flex items-center justify-center bg-gray-500/80"
-            initial={{ flex: 1 }}
-            animate={{
-              flex: isAnimating ? [1.5, 1, 2, 0.5, 1] : centerPct,
-            }}
-            transition={{
-              duration: 2,
-              ease: "easeInOut",
-              times: [0, 0.2, 0.4, 0.6, 0.8],
-              repeat: isAnimating ? Infinity : 0,
-            }}
-          >
-            <motion.span
-              className="absolute text-2xl font-bold text-white"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: showFinal ? 1 : 0 }}
-              transition={{ delay: 0.5 }}
-            >
-              {showFinal && `${centerPct}%`}
-            </motion.span>
-          </motion.div>
-
-          <motion.div
-            className="relative flex items-center justify-center bg-red-500/80"
-            initial={{ flex: 1 }}
-            animate={{
-              flex: isAnimating ? [1, 0.5, 1.5, 2, 1] : rightPct,
-            }}
-            transition={{
-              duration: 2,
-              ease: "easeInOut",
-              times: [0, 0.2, 0.4, 0.6, 0.8],
-              repeat: isAnimating ? Infinity : 0,
-            }}
-          >
-            <motion.span
-              className="absolute text-2xl font-bold text-white"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: showFinal ? 1 : 0 }}
-              transition={{ delay: 0.5 }}
-            >
-              {showFinal && `${rightPct}%`}
-            </motion.span>
-          </motion.div>
+            {/* Desktop Grid (20x5) */}
+            <div className="hidden gap-1 sm:flex">
+              {Array.from({ length: 20 }, (_, colIndex) => (
+                <div key={colIndex} className="flex flex-col gap-1">
+                  {squares
+                    .slice(colIndex * 5, (colIndex + 1) * 5)
+                    .map((category, index) => (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, scale: 0 }}
+                        animate={{
+                          opacity: 1,
+                          scale: 1,
+                          backgroundColor: showColor
+                            ? COLORS[category]
+                            : COLORS.empty,
+                        }}
+                        transition={{
+                          opacity: {
+                            duration: 0.3,
+                            delay: (colIndex * 5 + index) * 0.01,
+                          },
+                          scale: {
+                            duration: 0.3,
+                            delay: (colIndex * 5 + index) * 0.01,
+                          },
+                          backgroundColor: {
+                            duration: 0.5,
+                            delay: 1 + (colIndex * 5 + index) * 0.01,
+                          },
+                        }}
+                        className="h-6 w-6 rounded-sm shadow-sm"
+                      />
+                    ))}
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
         <motion.div
-          className="mt-8 text-center"
+          className="mt-6 text-center sm:mt-7 md:mt-8"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: showFinal ? 1 : 0, y: showFinal ? 0 : 20 }}
           transition={{ delay: 0.5 }}
         >
-          <p className="mb-6 text-lg">
-            {customCopy?.[primaryBubble] ||
-              (primaryBubble === "center"
-                ? "You appear to have a balanced news diet! You're seeing stories from across the political spectrum."
-                : primaryBubble === "left"
-                  ? "Your news sources tend to lean left. Consider diversifying with some center and right-leaning sources."
-                  : "Your news sources tend to lean right. Consider diversifying with some center and left-leaning sources.")}
+          <Button onClick={copyGridToClipboard} className="mb-4">
+            <ClipboardIcon className="mr-2 h-4 w-4" /> Copy your results
+          </Button>
+          <p className="mb-4 text-base sm:mb-5 sm:text-lg md:mb-6 md:text-xl">
+            {getScoreMessage(leftPct, centerPct, rightPct).message}
           </p>
 
           {customCTA && customCTALink && (
-            <Link
-              href={customCTALink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block rounded-md bg-blue-600 px-6 py-3 text-white transition-colors hover:bg-blue-700"
-            >
-              {customCTA}
-            </Link>
+            <div className="flex flex-col items-center justify-center gap-4">
+              <p className="mb-4 text-base sm:mb-5 sm:text-sm md:text-base">
+                {customCopy}
+              </p>
+              <Link
+                href={customCTALink || "https://readtangle.com"}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block rounded-md bg-blue-600 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-700 sm:px-5 sm:py-2.5 sm:text-base md:px-6 md:py-3 md:text-lg"
+              >
+                {customCTA}
+              </Link>
+            </div>
           )}
         </motion.div>
       </div>
-    </div>
+    </Card>
   );
 };
