@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { toPng } from "html-to-image";
-import { ClipboardIcon } from "lucide-react";
+import { ClipboardIcon, DownloadIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 const ScoreQuiz = ({ questions }) => {
@@ -272,6 +272,15 @@ const BubbleResultsViz = ({
     }
   };
 
+  const downloadGrid = async () => {
+    const dataUrl = await toPng(gridRef.current);
+    const link = document.createElement("a");
+    link.href = dataUrl;
+    link.download = "news-bubble-results.png";
+    link.click();
+    toast.success("Image saved!");
+  };
+
   function getScoreMessage(leftPct, centerPct, rightPct) {
     const scores = [leftPct, centerPct, rightPct];
     const max = Math.max(...scores);
@@ -461,9 +470,14 @@ const BubbleResultsViz = ({
           animate={{ opacity: showFinal ? 1 : 0, y: showFinal ? 0 : 20 }}
           transition={{ delay: 0.5 }}
         >
-          <Button onClick={copyGridToClipboard} className="mb-4">
-            <ClipboardIcon className="mr-2 h-4 w-4" /> Copy your results
-          </Button>
+          <div className="flex flex-row items-center justify-center gap-4">
+            <Button onClick={copyGridToClipboard} className="mb-4">
+              <ClipboardIcon className="mr-2 h-4 w-4" /> Copy your results
+            </Button>
+            <Button onClick={downloadGrid} className="mb-4">
+              <DownloadIcon className="mr-2 h-4 w-4" /> Download your results
+            </Button>
+          </div>
           <p className="mb-4 text-base sm:mb-5 sm:text-lg md:mb-6 md:text-xl">
             {getScoreMessage(leftPct, centerPct, rightPct).message}
           </p>
